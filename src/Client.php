@@ -63,12 +63,12 @@ class Client
                 if (isset($response['error'])) {
                     throw new Exception("Errore nel login: " . $response['error']);
                 } else {
-                    return new User($response['body']);
+                    return new Response($response['body']);
                 }
             }
             throw new Exception("Errore nel login: " . $response['error']);
         } else {
-            return new User($response['body']);
+            return new Response($response['body']);
         }
     }
 

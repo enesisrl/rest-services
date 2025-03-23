@@ -2,7 +2,7 @@
 
 namespace Enesisrl\RestServices;
 
-class User {
+class Response {
 
     private array $data;
     public function __construct(mixed $data){
