@@ -6,21 +6,44 @@ use Exception;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
-
+/**
+ * Client per la gestione delle chiamate REST ai servizi Enesi.
+ * @author Emanuele Toffolon - Enesi srl - www.enesi.it
+ */
 class Client
 {
-    protected bool $debug = false;
-    protected string $baseUri = 'https://rest2.ene.si';
+    /**
+     * Flag per attivare/disattivare la modalità debug.
+     *
+     * @var bool
+     */
+    protected $debug = false;
+    /**
+     * URI base per le chiamate API.
+     *
+     * @var string
+     */
+    protected $baseUri = 'https://rest2.ene.si';
+    /**
+     * Istanza del client HTTP Guzzle.
+     *
+     * @var HttpClient
+     */
+    private $client;
 
-    private HttpClient $client;
-
+    /**
+     * Inizializza una nuova istanza del client REST.
+     */
     public function __construct()
     {
         $this->client = new HttpClient();
     }
-
-    public function setDebug(bool $debug): void
-    {
+    /**
+     * Imposta la modalità debug e l'URI base corrispondente.
+     *
+     * @param bool $debug True per attivare la modalità debug, false per disattivarla
+     */
+    public function setDebug(bool $debug) {
         $this->debug = $debug;
         if ($this->debug) {
             $this->baseUri = 'https://rest2.enesi.vm';
@@ -30,9 +53,15 @@ class Client
     }
 
     /**
-     * @throws Exception
+     * Esegue il login utilizzando l'autenticazione Digest.
+     *
+     * @param string $username Nome utente per l'autenticazione
+     * @param string $password Password per l'autenticazione
+     * @return Response Risposta del server contenente i dati di login
+     * @throws Exception Se si verificano errori durante il login
      */
-    public function login($username, $password){
+    public function login($username, $password)
+    {
         $uri = '/api/v2/login';
         $options = [
             'headers' => [
@@ -72,8 +101,15 @@ class Client
         }
     }
 
-    public function get(string $url, array $options = []): array
-    {
+    /**
+     * Esegue una richiesta GET all'endpoint specificato.
+     *
+     * @param string $url URL completo dell'endpoint
+     * @param array $options Opzioni aggiuntive per la richiesta
+     * @return array Risposta del server con corpo, headers ed eventuali errori
+     * @throws GuzzleException
+     */
+    public function get($url, $options = []){
         try {
             $response = $this->client->request('GET', $url, $options);
             return [
@@ -93,9 +129,17 @@ class Client
     }
 
 
-
-    public function post(string $url, string $username, string $password, array $data = [], array $options = []): string
-    {
+    /**
+     * Esegue una richiesta POST all'endpoint specificato con autenticazione Digest.
+     *
+     * @param string $url URL completo dell'endpoint
+     * @param string $username Nome utente per l'autenticazione
+     * @param string $password Password per l'autenticazione
+     * @param array $data Dati da inviare nel corpo della richiesta
+     * @param array $options Opzioni aggiuntive per la richiesta
+     * @return string Risposta del server o messaggio di errore
+     */
+    public function post($url, $username, $password, $data = [], $options = [])  {
         try {
             $options['auth'] = [$username, $password, 'digest'];
             $options['form_params'] = $data;

@@ -3,6 +3,8 @@
     "description": "rest.ene.si libraries",
     "type": "library",
     "require": {
+        "ext-json": "*",
+        "php": "^7.2.5 || ^8.0",
         "guzzlehttp/guzzle": "^7.9"
     },
     "autoload": {
@@ -14,5 +16,8 @@
         {
             "name": "Enesi srl"
         }
-    ]
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "^11.5"
+    }
 }
